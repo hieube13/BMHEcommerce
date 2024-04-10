@@ -1,0 +1,79 @@
+
+<p-panel header="Danh sách thuộc tính">
+    <!--Filter-->
+    <div class="grid">
+      <div class="col-4">
+        <button pButton type="button" (click)="showAddModel()" icon="fa fa-plus" iconPos="left" label="Thêm mới"></button>
+        <button class="ml-2 p-button-help" pButton type="button" (click)="showEditModel()" *ngIf="selectedItems.length===1" icon="fa fa-plus" iconPos="left" label="Cập nhật"></button>
+        <button class="ml-2 p-button-danger" pButton type="button" (click)="deleteItems()" *ngIf="selectedItems.length > 0" icon="fa fa-plus" iconPos="left" label="Xoá"></button>
+      </div>
+      <div class="col-8">
+        <div class="formgroup-inline">
+          <div class="field">
+              <label for="txt-keyword" class="p-sr-only">Từ khoá</label>
+              <input id="txt-keyword" [(ngModel)]="keyword" pInputText type="text" placeholder="Gõ từ khoá">
+          </div>
+          <button type="button" pButton (click)="loadData()" icon="fa fa-search" iconPos="left" label="Tìm kiếm"></button>
+      </div>
+      </div>
+    </div>
+
+    <!--Table-->
+    <p-table #pnl [value]="items" [(selection)]="selectedItems" selectionMode="multiple">
+      <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 10px;">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+              <th>Mã</th>
+              <th>Kiểu dữ liệu</th>
+              <th>Nhãn</th>
+              <th>Thứ tự</th>
+              <th>Hiển thị</th>
+              <th>Bắt buộc nhập</th>
+              <th>Duy nhất</th>
+              <th>Kích hoạt</th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+          <tr [pSelectableRow]="row">
+            <th style="width: 10px;"><span class="ui-column-title"></span>
+              <p-tableCheckbox [value]="row"></p-tableCheckbox>
+            </th>
+              <td>{{ row.code }}</td>
+              <td>{{ getProductAttributeTypeName(row.dataType) }}</td>
+              <td>{{ row.label }}</td>
+              <td>{{ row.sortOrder }}</td>
+              <!-- <td>{{ row.categoryName }}</td> -->
+              <td>
+                <p-badge *ngIf="row.visibility === true" severity="success" value="Hiển thị"></p-badge>
+                <p-badge *ngIf="row.visibility === false" severity="danger" value="Ẩn"></p-badge>
+              </td>
+              <td>
+                <p-badge *ngIf="row.isRequired === true" severity="success" value="Có "></p-badge>
+                <p-badge *ngIf="row.isRequired === false" severity="danger" value="Không"></p-badge>
+              </td>
+              <td>
+                <p-badge *ngIf="row.isUnique === true" severity="success" value="Có"></p-badge>
+                <p-badge *ngIf="row.isUnique === false" severity="danger" value="Không"></p-badge>
+              </td>
+              <td>
+                <p-badge *ngIf="row.isActive === true" severity="success" value="kích hoạt"></p-badge>
+                <p-badge *ngIf="row.isActive === false" severity="danger" value="khoá"></p-badge>
+              </td>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div style="text-align: left;">
+          Tổng số bản ghi : {{ totalCount | number }}
+        </div>
+      </ng-template>
+    </p-table>
+
+    <!--Paginatior-->
+    <p-paginator [rows]="maxResultCount" [totalRecords]="totalCount" (onPageChange)="pageChanged($event)" [rowsPerPageOptions]="[10, 20, 30, 50, 100]"></p-paginator>
+    <!--Block UI-->
+    <p-blockUI [blocked]="blockedPanel" [target]="pnl">
+      <p-progressSpinner></p-progressSpinner>
+    </p-blockUI>
+</p-panel>
